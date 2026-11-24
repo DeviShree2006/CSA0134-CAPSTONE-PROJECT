@@ -1,0 +1,30 @@
+{
+  "name": "digital-forensics-system",
+  "version": "1.0.0",
+  "description": "Design and Development of an Intelligent Digital Forensics and Evidence Correlation System Using Advanced Data Structures",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "seed": "node database/seed.js",
+    "test": "node tests/test_runner.js"
+  },
+  "keywords": [
+    "digital-forensics",
+    "data-structures",
+    "hash-table",
+    "trie",
+    "avl-tree",
+    "graph",
+    "priority-queue",
+    "bfs-dfs"
+  ],
+  "author": "Forensics Data Structures Lab",
+  "license": "ISC",
+  "dependencies": {
+    "chart.js": "^4.6.1",
+    "cors": "^2.8.6",
+    "cytoscape": "^3.35.0",
+    "express": "^5.3.0",
+    "multer": "^2.5.0"
+  }
+}

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigator Authentication | Digital Forensics & Evidence Correlation System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at top center, #0f2b48 0%, #060d17 70%);
+            padding: 24px;
+        }
+        .login-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 460px;
+            box-shadow: var(--shadow-lg), 0 0 30px rgba(0, 119, 254, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-cyan));
+        }
+        .login-header {
+            padding: 32px 32px 20px 32px;
+            text-align: center;
+        }
+        .login-logo {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-glow);
+        }
+        .login-body {
+            padding: 0 32px 32px 32px;
+        }
+        .demo-credential-box {
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin-bottom: 22px;
+            font-size: 12.5px;
+        }
+        .demo-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px dashed var(--border-subtle);
+        }
+        .demo-fill-btn {
+            background-color: rgba(0, 119, 254, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--primary-light);
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .demo-fill-btn:hover {
+            background-color: var(--primary);
+            color: #fff;
+        }
+    </style>
+</head>
+<body class="login-page">
+
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logo">DF</div>
+            <h2 style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 6px;">DIGITAL FORENSICS SYSTEM</h2>
+            <p style="font-size: 13px; color: var(--text-secondary);">Evidence Correlation & Multi-Hypothesis Analysis</p>
+            <div style="margin-top: 10px;">
+                <span class="badge badge-info">DATA STRUCTURES ACADEMIC LAB</span>
+            </div>
+        </div>
+
+        <div class="login-body">
+            <!-- Demonstration Credentials Quick Select -->
+            <div class="demo-credential-box">
+                <div style="font-weight: 700; color: var(--accent-cyan); display: flex; align-items: center; gap: 6px;">
+                    <span>🔑 Demonstration Investigator Access</span>
+                </div>
+                <div class="demo-row">
+                    <div>
+                        <strong>admin</strong> / <code>admin123</code>
+                        <div style="color: var(--text-muted); font-size: 11px;">Special Agent Sarah Connor (Lead)</div>
+                    </div>
+                    <button type="button" class="demo-fill-btn" onclick="fillCreds('admin', 'admin123')">Auto-Fill</button>
+                </div>
+                <div class="demo-row">
+                    <div>
+                        <strong>analyst</strong> / <code>forensics2026</code>
+                        <div style="color: var(--text-muted); font-size: 11px;">Examiner Alex Mercer (Senior)</div>
+                    </div>
+                    <button type="button" class="demo-fill-btn" onclick="fillCreds('analyst', 'forensics2026')">Auto-Fill</button>
+                </div>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="username">Investigator Username / Badge</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter username (e.g. admin)" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Cryptographic Password / Passkey</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••••••" required>
+                </div>
+
+                <div id="login-error" style="color: var(--accent-rose); font-size: 12.5px; margin-bottom: 14px; display: none;"></div>
+
+                <button type="submit" id="btn-submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px;">
+                    <span>Authenticate & Access Evidence Vault</span>
+                    <span>→</span>
+                </button>
+            </form>
+
+            <div style="margin-top: 24px; text-align: center; font-size: 11.5px; color: var(--text-muted);">
+                Authorized Law Enforcement & Corporate Forensics Personnel Only.<br>
+                All access sessions are audited with SHA-256 integrity logs.
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        function fillCreds(u, p) {
+            document.getElementById('username').value = u;
+            document.getElementById('password').value = p;
+            document.getElementById('login-error').style.display = 'none';
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value;
+            const errEl = document.getElementById('login-error');
+            const submitBtn = document.getElementById('btn-submit');
+
+            errEl.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Authenticating Cryptographic Credentials...';
+
+            try {
+                const res = await API.login(u, p);
+                if (res.success && res.user) {
+                    Auth.setUser(res.user);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errEl.textContent = res.error || 'Authentication rejected.';
+                    errEl.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Authenticate & Access Evidence Vault →';
+                }
+            } catch (err) {
+                errEl.textContent = 'Failed to connect to backend server. Make sure server is running.';
+                errEl.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Authenticate & Access Evidence Vault →';
+            }
+        });
+    </script>
+</body>
+</html>

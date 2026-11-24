@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidence Vault & Integrity Management | Digital Forensics System</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <div class="app-logo">DF</div>
+                <div class="app-brand">
+                    <span class="brand-title">FORENSICS HQ</span>
+                    <span class="brand-badge">EVIDENCE CORRELATION</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Core Operations</div>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="cases.html" class="nav-item">
+                    <span class="nav-icon">📁</span>
+                    <span>Case Library (10)</span>
+                </a>
+                <a href="evidence.html" class="nav-item active">
+                    <span class="nav-icon">🛡️</span>
+                    <span>Evidence Vault</span>
+                </a>
+
+                <div class="nav-section-label">Investigation Tools</div>
+                <a href="graph.html" class="nav-item">
+                    <span class="nav-icon">🕸️</span>
+                    <span>Relationship Graph</span>
+                </a>
+                <a href="timeline.html" class="nav-item">
+                    <span class="nav-icon">⏱️</span>
+                    <span>Chronological Timeline</span>
+                </a>
+                <a href="analysis.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Investigation Analysis</span>
+                </a>
+
+                <div class="nav-section-label">Data Structures Lab</div>
+                <a href="ds-demo.html" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Data Structures Workbench</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-snippet">
+                    <div id="sidebar-user-avatar" class="user-avatar">SC</div>
+                    <div class="user-info">
+                        <span id="sidebar-user-name" class="user-name">Sarah Connor</span>
+                        <span id="sidebar-user-badge" class="user-badge">DF-7701</span>
+                    </div>
+                </div>
+                <button class="btn-logout" title="Logout" onclick="Auth.logout()">🚪</button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW -->
+        <main class="app-main">
+            <header class="app-topbar">
+                <div class="page-headline">
+                    <h1 class="page-title">Evidence Vault & Cryptographic Ledger</h1>
+                    <span class="badge badge-active">SHA-256 Hashing Enforced</span>
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="UI.openModal('modal-upload-evidence')">📤 Upload Sample Artifact</button>
+                    <button class="btn btn-primary btn-sm" onclick="UI.openModal('modal-add-evidence')">+ Register Evidence Record</button>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <div class="forensic-disclaimer-banner">
+                    <div style="font-size: 20px;">⚖️</div>
+                    <div>
+                        <strong>CHAIN OF CUSTODY & DUPLICATE IDENTIFICATION:</strong>
+                        All evidence records below are indexed via our custom <strong>Hash Table</strong> for O(1) duplicate checksum detection and a <strong>Trie</strong> for instant prefix search. Priority scores are calculated via our Max-Heap Priority Queue.
+                    </div>
+                </div>
+
+                <!-- FILTER & SEARCH BAR -->
+                <div class="card" style="padding: 18px; margin-bottom: 24px;">
+                    <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center;">
+                        <!-- Trie Autocomplete Search -->
+                        <div class="search-container">
+                            <input type="text" id="evidence-search-input" class="form-control" placeholder="Trie prefix search (ID, keyword, hash)..." autocomplete="off">
+                            <div id="trie-autocomplete-results" class="autocomplete-dropdown"></div>
+                        </div>
+
+                        <!-- Case Filter -->
+                        <select id="filter-case" class="form-control" style="max-width: 200px;">
+                            <option value="">All 10 Cases</option>
+                            <option value="CASE-2026-001">Case 1: Data Theft</option>
+                            <option value="CASE-2026-002">Case 2: Account Access</option>
+                            <option value="CASE-2026-003">Case 3: Missing Laptop</option>
+                            <option value="CASE-2026-004">Case 4: Financial Manipulation</option>
+                            <option value="CASE-2026-005">Case 5: Insider Leak</option>
+                            <option value="CASE-2026-006">Case 6: Phishing Campaign</option>
+                            <option value="CASE-2026-007">Case 7: Unauthorized DB</option>
+                            <option value="CASE-2026-008">Case 8: Document Tampering</option>
+                            <option value="CASE-2026-009">Case 9: Deleted Files</option>
+                            <option value="CASE-2026-010">Case 10: Suspicious Device</option>
+                        </select>
+
+                        <!-- Type Filter -->
+                        <select id="filter-type" class="form-control" style="max-width: 180px;">
+                            <option value="">All Evidence Types</option>
+                            <option value="Security Event Log">Security Event Log</option>
+                            <option value="Disk Image">Disk Image</option>
+                            <option value="Memory Dump">Memory Dump</option>
+                            <option value="Archive File">Archive File</option>
+                            <option value="Network Capture (PCAP)">Network Capture</option>
+                            <option value="Document Artifact">Document Artifact</option>
+                            <option value="Hardware Artifact">Hardware Artifact</option>
+                            <option value="Email Message (EML)">Email Message</option>
+                        </select>
+
+                        <!-- Priority Filter -->
+                        <select id="filter-priority" class="form-control" style="max-width: 140px;">
+                            <option value="">All Priorities</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+
+                        <button id="btn-reset-filters" class="btn btn-secondary btn-sm" onclick="resetFilters()">Reset</button>
+
+                        <div style="margin-left: auto; font-size: 13px; color: var(--text-muted);">
+                            Showing <strong id="evidence-count" style="color: var(--text-primary);">0</strong> Artifacts
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EVIDENCE TABLE -->
+                <div class="card" style="margin-bottom: 0;">
+                    <div class="table-responsive">
+                        <table class="forensic-table">
+                            <thead>
+                                <tr>
+                                    <th>Evidence ID</th>
+                                    <th>Case</th>
+                                    <th>Artifact Title</th>
+                                    <th>Type</th>
+                                    <th>Source</th>
+                                    <th>SHA-256 Hash</th>
+                                    <th>Priority Score</th>
+                                    <th>Integrity / Duplicate</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="evidence-master-tbody">
+                                <tr><td colspan="9" style="text-align: center; color: var(--text-muted);">Loading evidence records...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL 1: ADD EVIDENCE RECORD MANUALLY -->
+    <div id="modal-add-evidence" class="modal-backdrop">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <span class="modal-title">🛡️ Register Forensic Evidence Record</span>
+                <button class="modal-close">×</button>
+            </div>
+            <form id="form-add-evidence">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Associated Investigation Case</label>
+                        <select id="add-case-id" class="form-control" required>
+                            <option value="CASE-2026-001">CASE-2026-001: Corporate Data Theft</option>
+                            <option value="CASE-2026-002">CASE-2026-002: Suspicious Account Access</option>
+                            <option value="CASE-2026-003">CASE-2026-003: Missing Laptop Investigation</option>
+                            <option value="CASE-2026-004">CASE-2026-004: Financial Record Manipulation</option>
+                            <option value="CASE-2026-005">CASE-2026-005: Insider Information Leak</option>
+                            <option value="CASE-2026-006">CASE-2026-006: Phishing Campaign</option>
+                            <option value="CASE-2026-007">CASE-2026-007: Unauthorized Database Access</option>
+                            <option value="CASE-2026-008">CASE-2026-008: Digital Document Tampering</option>
+                            <option value="CASE-2026-009">CASE-2026-009: Deleted File Investigation</option>
+                            <option value="CASE-2026-010">CASE-2026-010: Suspicious Device Connection</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Evidence Title</label>
+                        <input type="text" id="add-title" class="form-control" placeholder="e.g. Memory Dump ws01_mem.raw" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div class="form-group">
+                            <label class="form-label">Evidence Category</label>
+                            <select id="add-type" class="form-control" required>
+                                <option value="Disk Image">Disk Image</option>
+                                <option value="Memory Dump">Memory Dump</option>
+                                <option value="Security Event Log">Security Event Log</option>
+                                <option value="Network Capture (PCAP)">Network Capture (PCAP)</option>
+                                <option value="Document Artifact">Document Artifact</option>
+                                <option value="Hardware Artifact">Hardware Artifact</option>
+                                <option value="Email Message (EML)">Email Message (EML)</option>
+                                <option value="Archive File">Archive File</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Source / Origin Device</label>
+                            <input type="text" id="add-source" class="form-control" placeholder="e.g. Workstation-WS-902" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">SHA-256 Checksum (64 Hex Characters)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="add-hash" class="form-control form-control-mono" placeholder="Paste 64-char SHA-256 hash" required>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="generateRandomSampleHash()">Generate</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Custody Officer & Acquisition Notes</label>
+                        <textarea id="add-notes" class="form-control" rows="2" placeholder="Document chain of custody location and initial observations..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save & Register Evidence</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: UPLOAD EVIDENCE FILE WITH SHA-256 -->
+    <div id="modal-upload-evidence" class="modal-backdrop">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <span class="modal-title">📤 Upload Sample Evidence File</span>
+                <button class="modal-close">×</button>
+            </div>
+            <form id="form-upload-evidence">
+                <div class="modal-body">
+                    <div style="background: rgba(0, 119, 254, 0.1); border: 1px solid var(--primary); padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 12.5px; color: var(--primary-light);">
+                        ℹ️ Uploaded files are preserved in a secure, non-public vault storage directory. The backend automatically computes the SHA-256 hash and validates duplicate status.
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Target Investigation Case</label>
+                        <select id="upload-case-id" class="form-control" required>
+                            <option value="CASE-2026-001">CASE-2026-001: Corporate Data Theft</option>
+                            <option value="CASE-2026-002">CASE-2026-002: Suspicious Account Access</option>
+                            <option value="CASE-2026-003">CASE-2026-003: Missing Laptop</option>
+                            <option value="CASE-2026-004">CASE-2026-004: Financial Record Manipulation</option>
+                            <option value="CASE-2026-005">CASE-2026-005: Insider Information Leak</option>
+                            <option value="CASE-2026-006">CASE-2026-006: Phishing Campaign</option>
+                            <option value="CASE-2026-007">CASE-2026-007: Unauthorized Database Access</option>
+                            <option value="CASE-2026-008">CASE-2026-008: Digital Document Tampering</option>
+                            <option value="CASE-2026-009">CASE-2026-009: Deleted File Investigation</option>
+                            <option value="CASE-2026-010">CASE-2026-010: Suspicious Device Connection</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Select Sample Forensic File (Log, PCAP, Text, EML, Image, Document)</label>
+                        <input type="file" id="upload-file-input" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Optional Artifact Title Override</label>
+                        <input type="text" id="upload-title" class="form-control" placeholder="Defaults to file name if empty">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Custody Officer Notes</label>
+                        <input type="text" id="upload-notes" class="form-control" placeholder="Acquired via physical seizure / upload">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                    <button type="submit" id="btn-upload-submit" class="btn btn-primary">Compute Hash & Secure Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: EVIDENCE DETAILS & DUPLICATE INSPECTOR -->
+    <div id="modal-evidence-details" class="modal-backdrop">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <span class="modal-title">🛡️ Forensic Evidence Artifact Dossier</span>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body" id="modal-evidence-detail-body">
+                Loading evidence details...
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/evidence.js"></script>
+</body>
+</html>

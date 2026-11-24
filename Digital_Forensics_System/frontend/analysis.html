@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Investigation Analysis Engine | Digital Forensics System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .hypothesis-card {
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-medium);
+            border-left: 5px solid var(--primary);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-bottom: 18px;
+            transition: all 0.2s ease;
+        }
+        .hypothesis-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-md);
+        }
+        .evidence-pill-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background-color: rgba(0, 119, 254, 0.15);
+            border: 1px solid var(--border-accent);
+            color: var(--primary-light);
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 11.5px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            text-decoration: none;
+            margin: 2px 4px 2px 0;
+        }
+        .evidence-pill-tag:hover {
+            background-color: var(--primary);
+            color: #fff;
+        }
+        .observation-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px;
+            background-color: var(--bg-surface-elevated);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 12px;
+        }
+        .alt-explanation-box {
+            background-color: rgba(245, 158, 11, 0.05);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <div class="app-logo">DF</div>
+                <div class="app-brand">
+                    <span class="brand-title">FORENSICS HQ</span>
+                    <span class="brand-badge">EVIDENCE CORRELATION</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Core Operations</div>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="cases.html" class="nav-item">
+                    <span class="nav-icon">📁</span>
+                    <span>Case Library (10)</span>
+                </a>
+                <a href="evidence.html" class="nav-item">
+                    <span class="nav-icon">🛡️</span>
+                    <span>Evidence Vault</span>
+                </a>
+
+                <div class="nav-section-label">Investigation Tools</div>
+                <a href="graph.html" class="nav-item">
+                    <span class="nav-icon">🕸️</span>
+                    <span>Relationship Graph</span>
+                </a>
+                <a href="timeline.html" class="nav-item">
+                    <span class="nav-icon">⏱️</span>
+                    <span>Chronological Timeline</span>
+                </a>
+                <a href="analysis.html" class="nav-item active">
+                    <span class="nav-icon">🔍</span>
+                    <span>Investigation Analysis</span>
+                </a>
+
+                <div class="nav-section-label">Data Structures Lab</div>
+                <a href="ds-demo.html" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Data Structures Workbench</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-snippet">
+                    <div id="sidebar-user-avatar" class="user-avatar">SC</div>
+                    <div class="user-info">
+                        <span id="sidebar-user-name" class="user-name">Sarah Connor</span>
+                        <span id="sidebar-user-badge" class="user-badge">DF-7701</span>
+                    </div>
+                </div>
+                <button class="btn-logout" title="Logout" onclick="Auth.logout()">🚪</button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW -->
+        <main class="app-main">
+            <header class="app-topbar">
+                <div class="page-headline">
+                    <h1 class="page-title">Rule-Based Forensic Analysis Engine</h1>
+                    <span class="badge badge-active">Deterministic Correlation</span>
+                </div>
+                <div class="topbar-actions">
+                    <a id="btn-export-report" href="#" target="_blank" class="btn btn-secondary btn-sm" style="display: none;">
+                        📄 Export Case Report (Print / PDF)
+                    </a>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <!-- LEGAL DISCLAIMER BANNER -->
+                <div class="forensic-disclaimer-banner">
+                    <div style="font-size: 24px;">⚖️</div>
+                    <div>
+                        <strong>INVESTIGATIVE LEADS ONLY — CERTIFIED EXAMINER CORROBORATION REQUIRED:</strong><br>
+                        This system does not conclude that any person is legally guilty. All hypotheses, key observations, and relationship links are rule-based investigative leads generated from database records and manual data structure graph algorithms. All subjects are presumed innocent until proven guilty in a court of law.
+                    </div>
+                </div>
+
+                <!-- CASE SELECTION & PROMINENT GENERATION ACTION -->
+                <div class="card" style="padding: 24px; margin-bottom: 24px; text-align: center; background: radial-gradient(circle at center, #0f2b48 0%, #0d2040 100%); border: 1px solid var(--border-accent);">
+                    <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">
+                        Select Investigation Case & Execute Automated Forensic Correlation
+                    </h2>
+                    <p style="font-size: 13.5px; color: var(--text-secondary); max-width: 650px; margin: 0 auto 20px auto;">
+                        Choose one of the 10 digital forensics cases to analyze its actual database records, evaluate evidence weights, correlate timestamps, and synthesize investigative hypotheses.
+                    </p>
+
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap;">
+                        <select id="analysis-case-select" class="form-control" style="max-width: 380px; font-size: 14px; padding: 10px 14px;">
+                            <option value="CASE-2026-001">CASE-2026-001: Corporate Data Theft (Project Aegis)</option>
+                            <option value="CASE-2026-002">CASE-2026-002: Suspicious Account Access & MFA Bypass</option>
+                            <option value="CASE-2026-003">CASE-2026-003: Missing Executive Laptop Investigation</option>
+                            <option value="CASE-2026-004">CASE-2026-004: Financial Record Manipulation in ERP</option>
+                            <option value="CASE-2026-005">CASE-2026-005: Insider Confidential Information Leak</option>
+                            <option value="CASE-2026-006">CASE-2026-006: Targeted HR Spear-Phishing Campaign</option>
+                            <option value="CASE-2026-007">CASE-2026-007: Unauthorized Customer Database Access (SQLi)</option>
+                            <option value="CASE-2026-008">CASE-2026-008: Digital Vendor Contract Tampering</option>
+                            <option value="CASE-2026-009">CASE-2026-009: Anti-Forensic File Deletion & Scrubbing</option>
+                            <option value="CASE-2026-010">CASE-2026-010: Rogue Hardware Keylogger Connection</option>
+                        </select>
+
+                        <!-- PROMINENT BUTTON AS REQUIRED BY SPEC -->
+                        <button id="btn-generate-analysis" class="btn btn-primary btn-lg" onclick="executeAnalysis()">
+                            <span style="font-size: 18px;">⚡</span>
+                            <span style="font-weight: 800; letter-spacing: 0.5px;">GENERATE INVESTIGATION ANALYSIS</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ANALYSIS RESULTS CONTAINER (HIDDEN UNTIL GENERATED) -->
+                <div id="analysis-results-container" style="display: none;">
+
+                    <!-- SECTION 0: DATA STRUCTURE ENGINE METRICS -->
+                    <div class="card" style="background: var(--bg-surface-elevated); border-color: var(--primary-light);">
+                        <div class="card-header">
+                            <span class="card-title">⚙️ Data Structure Engine Execution Metrics</span>
+                            <span class="badge badge-info">Zero-External-AI Deterministic Engine</span>
+                        </div>
+                        <div id="ds-engine-metrics" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; font-size: 12.5px;">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- SECTION 1: KEY OBSERVATIONS -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">1. Key Forensic Observations & Artifact Telemetry</span>
+                            <span class="badge badge-high">Evidence Corroborated</span>
+                        </div>
+                        <div id="observations-list">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: POSSIBLE INVESTIGATION HYPOTHESES -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">2. Possible Investigation Hypotheses & Evaluated Leads</span>
+                            <span class="badge badge-info">Multi-Hypothesis Synthesis</span>
+                        </div>
+                        <div id="hypotheses-list">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: ALTERNATIVE EXPLANATIONS CONSIDERED -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">3. Alternative Explanations & Counter-Hypotheses</span>
+                            <span class="badge badge-medium">Bias Mitigation</span>
+                        </div>
+                        <div id="alternative-explanations-list">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- SECTION 4: SIGNIFICANT TIMESTAMPS & CRITICAL WINDOW -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">4. Significant Chronological Timestamps</span>
+                            <span class="badge badge-info">Merge Sort Sequence</span>
+                        </div>
+                        <div id="significant-timestamps-list" style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- SECTION 5: EVIDENCE RELATIONSHIPS & GRAPH CORRELATIONS -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">5. Entity-to-Evidence Relationship Correlations</span>
+                            <a id="btn-inspect-in-graph" href="#" class="btn btn-secondary btn-sm">Inspect in Cytoscape Graph →</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="forensic-table">
+                                <thead>
+                                    <tr>
+                                        <th>Source Entity</th>
+                                        <th>Relationship</th>
+                                        <th>Target Artifact</th>
+                                        <th>Citing Evidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="relationships-tbody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 6: IMPORTANT EVIDENCE RANKING -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">6. Priority Evidence Artifacts (Max-Heap Priority Queue)</span>
+                            <span class="badge badge-high">Triage Ranking</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="forensic-table">
+                                <thead>
+                                    <tr>
+                                        <th>Evidence ID</th>
+                                        <th>Artifact Title</th>
+                                        <th>Type</th>
+                                        <th>Priority Score</th>
+                                        <th>Reasoning / Scoring Factor</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="important-evidence-tbody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 7: RECOMMENDED NEXT STEPS -->
+                    <div class="card" style="border-left: 4px solid var(--accent-green);">
+                        <div class="card-header">
+                            <span class="card-title">7. Recommended Next Investigation Steps</span>
+                            <span class="badge badge-low">Actionable Leads</span>
+                        </div>
+                        <div id="recommended-steps-list" style="padding-left: 20px; font-size: 13.5px; line-height: 1.8; color: var(--text-primary);">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/analysis-view.js"></script>
+</body>
+</html>

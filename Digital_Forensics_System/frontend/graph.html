@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Evidence Correlation Graph | Digital Forensics System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/libs/cytoscape.min.js"></script>
+    <style>
+        .graph-layout-container {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+            height: calc(100vh - var(--topbar-height) - 130px);
+            min-height: 560px;
+        }
+        #cy-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            width: 100%;
+            height: 100%;
+            position: relative;
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6);
+        }
+        .graph-sidebar-panel {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+        }
+        .traversal-step-box {
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            font-size: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+        }
+        .graph-legend {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 10px 14px;
+            background: var(--bg-surface-elevated);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            font-size: 11.5px;
+            margin-bottom: 14px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <div class="app-logo">DF</div>
+                <div class="app-brand">
+                    <span class="brand-title">FORENSICS HQ</span>
+                    <span class="brand-badge">EVIDENCE CORRELATION</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Core Operations</div>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="cases.html" class="nav-item">
+                    <span class="nav-icon">📁</span>
+                    <span>Case Library (10)</span>
+                </a>
+                <a href="evidence.html" class="nav-item">
+                    <span class="nav-icon">🛡️</span>
+                    <span>Evidence Vault</span>
+                </a>
+
+                <div class="nav-section-label">Investigation Tools</div>
+                <a href="graph.html" class="nav-item active">
+                    <span class="nav-icon">🕸️</span>
+                    <span>Relationship Graph</span>
+                </a>
+                <a href="timeline.html" class="nav-item">
+                    <span class="nav-icon">⏱️</span>
+                    <span>Chronological Timeline</span>
+                </a>
+                <a href="analysis.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Investigation Analysis</span>
+                </a>
+
+                <div class="nav-section-label">Data Structures Lab</div>
+                <a href="ds-demo.html" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Data Structures Workbench</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-snippet">
+                    <div id="sidebar-user-avatar" class="user-avatar">SC</div>
+                    <div class="user-info">
+                        <span id="sidebar-user-name" class="user-name">Sarah Connor</span>
+                        <span id="sidebar-user-badge" class="user-badge">DF-7701</span>
+                    </div>
+                </div>
+                <button class="btn-logout" title="Logout" onclick="Auth.logout()">🚪</button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW -->
+        <main class="app-main">
+            <header class="app-topbar">
+                <div class="page-headline">
+                    <h1 class="page-title">Interactive Evidence Correlation Graph</h1>
+                    <span class="badge badge-info">Cytoscape.js Engine</span>
+                </div>
+                <div class="topbar-actions">
+                    <select id="case-selector" class="form-control" style="max-width: 280px;">
+                        <option value="CASE-2026-001">Case 1: Corporate Data Theft</option>
+                        <option value="CASE-2026-002">Case 2: Account Access & MFA</option>
+                        <option value="CASE-2026-003">Case 3: Missing Laptop</option>
+                        <option value="CASE-2026-004">Case 4: Financial Manipulation</option>
+                        <option value="CASE-2026-005">Case 5: Insider Leak</option>
+                        <option value="CASE-2026-006">Case 6: Phishing Campaign</option>
+                        <option value="CASE-2026-007">Case 7: Unauthorized DB</option>
+                        <option value="CASE-2026-008">Case 8: Document Tampering</option>
+                        <option value="CASE-2026-009">Case 9: Deleted Files</option>
+                        <option value="CASE-2026-010">Case 10: Suspicious Device</option>
+                    </select>
+
+                    <button id="btn-fit-graph" class="btn btn-secondary btn-sm" onclick="fitGraph()">Fit Graph ⤢</button>
+                </div>
+            </header>
+
+            <div class="content-body" style="padding-bottom: 12px;">
+                <!-- GRAPH LEGEND -->
+                <div class="graph-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: #38bdf8;"></div><span>Person of Interest</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #10b981;"></div><span>Hardware Device</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #f59e0b;"></div><span>User Account</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #ef4444;"></div><span>Forensic Evidence</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #a855f7;"></div><span>Timeline Event</span></div>
+                    <div style="margin-left: auto; color: var(--text-muted);">Click any node to inspect metadata or explore 1-hop connections.</div>
+                </div>
+
+                <!-- MAIN WORKSPACE SPLIT (CANVAS + CONTROLS/INSPECTOR) -->
+                <div class="graph-layout-container">
+                    <!-- CYTOSCAPE CANVAS -->
+                    <div id="cy-container"></div>
+
+                    <!-- CONTROL & INSPECTION PANEL -->
+                    <div class="graph-sidebar-panel">
+                        <!-- Traversal Control Box -->
+                        <div>
+                            <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                <span>⚡ Graph Traversal (BFS & DFS)</span>
+                            </h3>
+
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label class="form-label" style="font-size: 11.5px;">Algorithm</label>
+                                <select id="traversal-algo" class="form-control" style="font-size: 12.5px; padding: 6px 10px;">
+                                    <option value="bfs">Breadth-First Search (Shortest Path & Level Rings)</option>
+                                    <option value="dfs">Depth-First Search (Deep Chain of Custody)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label class="form-label" style="font-size: 11.5px;">Start Entity (Origin)</label>
+                                <select id="traversal-start-node" class="form-control" style="font-size: 12.5px; padding: 6px 10px;"></select>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label class="form-label" style="font-size: 11.5px;">Target Entity (Optional Path Destination)</label>
+                                <select id="traversal-target-node" class="form-control" style="font-size: 12.5px; padding: 6px 10px;">
+                                    <option value="">None (Full Component Traversal)</option>
+                                </select>
+                            </div>
+
+                            <div style="display: flex; gap: 8px;">
+                                <button id="btn-run-traversal" class="btn btn-primary btn-sm" style="flex: 1; justify-content: center;" onclick="runInteractiveTraversal()">
+                                    Animate Traversal ▶
+                                </button>
+                                <button class="btn btn-secondary btn-sm" onclick="clearTraversalHighlights()">Reset</button>
+                            </div>
+                        </div>
+
+                        <!-- Layout Selection -->
+                        <div style="padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                            <label class="form-label" style="font-size: 11.5px;">Graph Layout</label>
+                            <select id="graph-layout-select" class="form-control" style="font-size: 12.5px; padding: 6px 10px;" onchange="changeLayout(this.value)">
+                                <option value="concentric">Concentric Rings</option>
+                                <option value="breadthfirst">Breadth-First Tree</option>
+                                <option value="cose">CoSE Physics / Force-Directed</option>
+                                <option value="circle">Circular Topology</option>
+                            </select>
+                        </div>
+
+                        <!-- Traversal Live Step Output -->
+                        <div style="padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 6px;">Algorithm Execution Trace:</div>
+                            <div id="traversal-step-log" class="traversal-step-box">
+                                Ready. Select an origin node and click 'Animate Traversal'.
+                            </div>
+                        </div>
+
+                        <!-- Selected Node Inspector -->
+                        <div style="padding-top: 12px; border-top: 1px solid var(--border-subtle); flex: 1;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Entity Inspector:</div>
+                            <div id="node-inspector" style="font-size: 12.5px; color: var(--text-muted);">
+                                Click any node in the graph canvas to inspect attributes, degree centrality, and connected edges.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/graph-view.js"></script>
+</body>
+</html>

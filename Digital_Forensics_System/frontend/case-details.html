@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Dossier & Evidence Details | Digital Forensics System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .case-dossier-header {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-medium);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 13.5px;
+            font-weight: 600;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+        .tab-btn.active {
+            color: var(--primary-light);
+            border-bottom-color: var(--primary);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .person-card, .device-card {
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+        .person-card:hover, .device-card:hover {
+            border-color: var(--border-accent);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <div class="app-logo">DF</div>
+                <div class="app-brand">
+                    <span class="brand-title">FORENSICS HQ</span>
+                    <span class="brand-badge">EVIDENCE CORRELATION</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Core Operations</div>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="cases.html" class="nav-item active">
+                    <span class="nav-icon">📁</span>
+                    <span>Case Library (10)</span>
+                </a>
+                <a href="evidence.html" class="nav-item">
+                    <span class="nav-icon">🛡️</span>
+                    <span>Evidence Vault</span>
+                </a>
+
+                <div class="nav-section-label">Investigation Tools</div>
+                <a href="graph.html" class="nav-item">
+                    <span class="nav-icon">🕸️</span>
+                    <span>Relationship Graph</span>
+                </a>
+                <a href="timeline.html" class="nav-item">
+                    <span class="nav-icon">⏱️</span>
+                    <span>Chronological Timeline</span>
+                </a>
+                <a href="analysis.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Investigation Analysis</span>
+                </a>
+
+                <div class="nav-section-label">Data Structures Lab</div>
+                <a href="ds-demo.html" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Data Structures Workbench</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-snippet">
+                    <div id="sidebar-user-avatar" class="user-avatar">SC</div>
+                    <div class="user-info">
+                        <span id="sidebar-user-name" class="user-name">Sarah Connor</span>
+                        <span id="sidebar-user-badge" class="user-badge">DF-7701</span>
+                    </div>
+                </div>
+                <button class="btn-logout" title="Logout" onclick="Auth.logout()">🚪</button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW -->
+        <main class="app-main">
+            <header class="app-topbar">
+                <div class="page-headline">
+                    <a href="cases.html" style="color: var(--text-muted); text-decoration: none; font-size: 13px;">← Cases</a>
+                    <span style="color: var(--border-medium);">/</span>
+                    <h1 id="topbar-case-title" class="page-title">Case Dossier</h1>
+                </div>
+                <div class="topbar-actions">
+                    <a id="btn-jump-analysis" href="#" class="btn btn-primary btn-sm">🔍 Generate Investigation Analysis</a>
+                    <a id="btn-jump-graph" href="#" class="btn btn-secondary btn-sm">🕸️ Graph View</a>
+                    <a id="btn-print-report" href="#" target="_blank" class="btn btn-secondary btn-sm">📄 Download Report</a>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <!-- LEGAL DISCLAIMER -->
+                <div class="forensic-disclaimer-banner">
+                    <div style="font-size: 20px;">⚖️</div>
+                    <div>
+                        <strong>PRESERVATION & CHAIN OF CUSTODY NOTICE:</strong>
+                        All artifacts below were forensically cataloged with verified cryptographic SHA-256 signatures. Persons of interest are subjects of an ongoing technical inquiry and must be presumed innocent under law.
+                    </div>
+                </div>
+
+                <!-- DOSSIER HEADER -->
+                <div class="case-dossier-header">
+                    <div style="flex: 1; min-width: 300px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                            <span id="dossier-id" class="case-id-badge">CASE-2026-001</span>
+                            <span id="dossier-category" style="color: var(--primary-light); font-size: 13px; font-weight: 600;">Corporate Data Theft</span>
+                            <span id="dossier-severity"></span>
+                        </div>
+                        <h2 id="dossier-title" style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 10px;">Case Title Loading...</h2>
+                        <p id="dossier-desc" style="color: var(--text-secondary); font-size: 13.5px; line-height: 1.5; margin-bottom: 14px;">Description...</p>
+
+                        <div style="display: flex; gap: 24px; font-size: 12.5px; color: var(--text-muted); flex-wrap: wrap;">
+                            <div>📅 <strong>Incident Date:</strong> <span id="dossier-date">-</span></div>
+                            <div>🕵️ <strong>Lead Investigator:</strong> <span id="dossier-investigator">-</span></div>
+                            <div>🏛️ <strong>Database Status:</strong> <span id="dossier-status">-</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Status Update Widget -->
+                    <div style="background: var(--bg-surface-elevated); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-medium); min-width: 220px;">
+                        <label class="form-label">Update Case Status</label>
+                        <select id="select-status" class="form-control" style="margin-bottom: 10px;">
+                            <option value="Active">Active</option>
+                            <option value="Under Review">Under Review</option>
+                            <option value="Closed - Findings Logged">Closed - Findings Logged</option>
+                        </select>
+                        <button id="btn-save-status" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: center;">Save Status</button>
+                    </div>
+                </div>
+
+                <!-- TAB NAVIGATION -->
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchTab('tab-background')">📖 Incident Background</button>
+                    <button class="tab-btn" onclick="switchTab('tab-persons')">👥 Persons of Interest (<span id="count-persons">3</span>)</button>
+                    <button class="tab-btn" onclick="switchTab('tab-devices')">💻 Hardware Devices (<span id="count-devices">2</span>)</button>
+                    <button class="tab-btn" onclick="switchTab('tab-evidence')">🛡️ Evidence Records (<span id="count-evidence">10</span>)</button>
+                    <button class="tab-btn" onclick="switchTab('tab-events')">⏱️ Timeline Events (<span id="count-events">6</span>)</button>
+                    <button class="tab-btn" onclick="switchTab('tab-logs')">📜 Activity Logs (10+)</button>
+                </div>
+
+                <!-- TAB 1: BACKGROUND -->
+                <div id="tab-background" class="tab-content active">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">📜 Forensic Incident Narrative & Background</span>
+                        </div>
+                        <div id="dossier-full-background" style="font-size: 14px; color: var(--text-primary); line-height: 1.7; background: var(--bg-surface-elevated); padding: 20px; border-radius: var(--radius-sm); border-left: 4px solid var(--primary);">
+                            Loading background...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: PERSONS -->
+                <div id="tab-persons" class="tab-content">
+                    <div id="persons-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px;">
+                        <!-- Persons populated via JS -->
+                    </div>
+                </div>
+
+                <!-- TAB 3: DEVICES -->
+                <div id="tab-devices" class="tab-content">
+                    <div id="devices-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px;">
+                        <!-- Devices populated via JS -->
+                    </div>
+                </div>
+
+                <!-- TAB 4: EVIDENCE -->
+                <div id="tab-evidence" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">🛡️ Registered Evidence Artifacts</span>
+                            <a href="evidence.html" class="btn btn-primary btn-sm">+ Add / Upload Evidence</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="forensic-table">
+                                <thead>
+                                    <tr>
+                                        <th>Evidence ID</th>
+                                        <th>Artifact Title</th>
+                                        <th>Type</th>
+                                        <th>Source Origin</th>
+                                        <th>Timestamp</th>
+                                        <th>Cryptographic SHA-256</th>
+                                        <th>Priority Score</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="evidence-table-tbody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: TIMELINE EVENTS -->
+                <div id="tab-events" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">⏱️ Key Chronological Events</span>
+                            <a id="btn-full-timeline" href="#" class="btn btn-secondary btn-sm">Full Timeline View →</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="forensic-table">
+                                <thead>
+                                    <tr>
+                                        <th>Event Time</th>
+                                        <th>Event Title & Detail</th>
+                                        <th>Category</th>
+                                        <th>Severity</th>
+                                        <th>Related Evidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="events-table-tbody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 6: ACTIVITY LOGS -->
+                <div id="tab-logs" class="tab-content">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">🔑 Authentication & Login Records</span>
+                            </div>
+                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                <table class="forensic-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Account</th>
+                                            <th>IP</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="login-logs-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">📁 File System Access Activity</span>
+                            </div>
+                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                <table class="forensic-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Action</th>
+                                            <th>Path</th>
+                                            <th>Transferred</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="file-logs-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: EVIDENCE INTEGRITY VERIFICATION -->
+    <div id="modal-verify-evidence" class="modal-backdrop">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <span class="modal-title">🛡️ Cryptographic Integrity Check</span>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body" id="modal-verify-body">
+                Loading cryptographic validation...
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/case-details.js"></script>
+</body>
+</html>

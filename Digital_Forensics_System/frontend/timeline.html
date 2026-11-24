@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronological Investigation Timeline | Digital Forensics System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .timeline-container {
+            position: relative;
+            padding: 20px 0 20px 30px;
+        }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 8px;
+            width: 3px;
+            background: linear-gradient(180deg, var(--primary), var(--accent-cyan));
+            border-radius: 2px;
+        }
+        .timeline-node {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .timeline-node::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 6px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            border: 3px solid var(--bg-card);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        .timeline-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            transition: all 0.2s ease;
+        }
+        .timeline-card:hover {
+            border-color: var(--border-accent);
+            transform: translateX(4px);
+        }
+        .benchmark-metric-box {
+            background-color: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <div class="app-logo">DF</div>
+                <div class="app-brand">
+                    <span class="brand-title">FORENSICS HQ</span>
+                    <span class="brand-badge">EVIDENCE CORRELATION</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Core Operations</div>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="cases.html" class="nav-item">
+                    <span class="nav-icon">📁</span>
+                    <span>Case Library (10)</span>
+                </a>
+                <a href="evidence.html" class="nav-item">
+                    <span class="nav-icon">🛡️</span>
+                    <span>Evidence Vault</span>
+                </a>
+
+                <div class="nav-section-label">Investigation Tools</div>
+                <a href="graph.html" class="nav-item">
+                    <span class="nav-icon">🕸️</span>
+                    <span>Relationship Graph</span>
+                </a>
+                <a href="timeline.html" class="nav-item active">
+                    <span class="nav-icon">⏱️</span>
+                    <span>Chronological Timeline</span>
+                </a>
+                <a href="analysis.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Investigation Analysis</span>
+                </a>
+
+                <div class="nav-section-label">Data Structures Lab</div>
+                <a href="ds-demo.html" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Data Structures Workbench</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-snippet">
+                    <div id="sidebar-user-avatar" class="user-avatar">SC</div>
+                    <div class="user-info">
+                        <span id="sidebar-user-name" class="user-name">Sarah Connor</span>
+                        <span id="sidebar-user-badge" class="user-badge">DF-7701</span>
+                    </div>
+                </div>
+                <button class="btn-logout" title="Logout" onclick="Auth.logout()">🚪</button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW -->
+        <main class="app-main">
+            <header class="app-topbar">
+                <div class="page-headline">
+                    <h1 class="page-title">Chronological Incident Timeline</h1>
+                    <span class="badge badge-info">Sorting & AVL Indexing</span>
+                </div>
+                <div class="topbar-actions">
+                    <select id="timeline-case-select" class="form-control" style="max-width: 280px;">
+                        <option value="CASE-2026-001">Case 1: Corporate Data Theft</option>
+                        <option value="CASE-2026-002">Case 2: Account Access & MFA</option>
+                        <option value="CASE-2026-003">Case 3: Missing Laptop</option>
+                        <option value="CASE-2026-004">Case 4: Financial Manipulation</option>
+                        <option value="CASE-2026-005">Case 5: Insider Leak</option>
+                        <option value="CASE-2026-006">Case 6: Phishing Campaign</option>
+                        <option value="CASE-2026-007">Case 7: Unauthorized DB</option>
+                        <option value="CASE-2026-008">Case 8: Document Tampering</option>
+                        <option value="CASE-2026-009">Case 9: Deleted Files</option>
+                        <option value="CASE-2026-010">Case 10: Suspicious Device</option>
+                    </select>
+
+                    <button class="btn btn-secondary btn-sm" onclick="openBenchmarkModal()">📊 Sorting Benchmark</button>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <div class="forensic-disclaimer-banner">
+                    <div style="font-size: 20px;">⚖️</div>
+                    <div>
+                        <strong>CHRONOLOGICAL ORDERING WITH ADVANCED DATA STRUCTURES:</strong>
+                        Events are sorted using our manual <strong>Merge Sort</strong>, <strong>Quick Sort</strong>, or <strong>Radix Sort</strong> implementations. Timestamp windows are queried via self-balancing <strong>AVL Tree</strong> range indexing.
+                    </div>
+                </div>
+
+                <!-- CONTROLS & FILTERS BAR -->
+                <div class="card" style="padding: 18px; margin-bottom: 24px;">
+                    <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center;">
+                        <!-- Sorting Algorithm Selector -->
+                        <div>
+                            <label class="form-label" style="font-size: 11px;">Sorting Algorithm</label>
+                            <select id="select-sort-algo" class="form-control" style="max-width: 200px; font-size: 12.5px;">
+                                <option value="mergesort">Merge Sort [O(n log n) Stable]</option>
+                                <option value="quicksort">Quick Sort [Avg O(n log n)]</option>
+                                <option value="radixsort">Radix Sort [O(d*(n+k))]</option>
+                            </select>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div>
+                            <label class="form-label" style="font-size: 11px;">Event Category</label>
+                            <select id="select-event-cat" class="form-control" style="max-width: 180px; font-size: 12.5px;">
+                                <option value="">All Categories</option>
+                                <option value="Authentication">Authentication</option>
+                                <option value="Data Transfer">Data Transfer</option>
+                                <option value="System Modification">System Modification</option>
+                                <option value="Physical Security">Physical Security</option>
+                                <option value="External Communication">Communication</option>
+                                <option value="Incident Alert">Incident Alert</option>
+                            </select>
+                        </div>
+
+                        <!-- Severity Filter -->
+                        <div>
+                            <label class="form-label" style="font-size: 11px;">Severity</label>
+                            <select id="select-event-sev" class="form-control" style="max-width: 140px; font-size: 12.5px;">
+                                <option value="">All Severities</option>
+                                <option value="Critical">Critical</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+
+                        <div style="display: flex; align-items: flex-end; gap: 8px;">
+                            <button class="btn btn-primary btn-sm" onclick="loadTimeline()" style="margin-top: 18px;">Apply & Sort</button>
+                        </div>
+
+                        <!-- Realtime Sorting Metrics Pill -->
+                        <div id="sort-metrics-pill" class="benchmark-metric-box" style="margin-left: auto; display: flex; gap: 16px;">
+                            <div>Algo: <strong id="metric-algo" style="color: var(--primary-light);">Merge Sort</strong></div>
+                            <div>Comparisons: <strong id="metric-comps" style="color: var(--accent-cyan);">0</strong></div>
+                            <div>Duration: <strong id="metric-time" style="color: #34d399;">0.00 µs</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TIMELINE VIEW -->
+                <div class="card" style="padding: 24px; margin-bottom: 0;">
+                    <div id="timeline-events-container" class="timeline-container">
+                        <div style="color: var(--text-muted); text-align: center;">Loading timeline events...</div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: SORTING ALGORITHM BENCHMARK -->
+    <div id="modal-benchmark" class="modal-backdrop">
+        <div class="modal-dialog" style="max-width: 700px;">
+            <div class="modal-header">
+                <span class="modal-title">📊 Sorting Algorithms Academic Benchmark</span>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body" id="modal-benchmark-body">
+                Loading benchmark results...
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/timeline-view.js"></script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forensic Command Dashboard | Digital Forensics System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/libs/chart.umd.js"></script>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <div class="app-logo">DF</div>
+                <div class="app-brand">
+                    <span class="brand-title">FORENSICS HQ</span>
+                    <span class="brand-badge">EVIDENCE CORRELATION</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Core Operations</div>
+                <a href="dashboard.html" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="cases.html" class="nav-item">
+                    <span class="nav-icon">📁</span>
+                    <span>Case Library (10)</span>
+                </a>
+                <a href="evidence.html" class="nav-item">
+                    <span class="nav-icon">🛡️</span>
+                    <span>Evidence Vault</span>
+                </a>
+
+                <div class="nav-section-label">Investigation Tools</div>
+                <a href="graph.html" class="nav-item">
+                    <span class="nav-icon">🕸️</span>
+                    <span>Relationship Graph</span>
+                </a>
+                <a href="timeline.html" class="nav-item">
+                    <span class="nav-icon">⏱️</span>
+                    <span>Chronological Timeline</span>
+                </a>
+                <a href="analysis.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Investigation Analysis</span>
+                </a>
+
+                <div class="nav-section-label">Data Structures Lab</div>
+                <a href="ds-demo.html" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Data Structures Workbench</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-snippet">
+                    <div id="sidebar-user-avatar" class="user-avatar">SC</div>
+                    <div class="user-info">
+                        <span id="sidebar-user-name" class="user-name">Sarah Connor</span>
+                        <span id="sidebar-user-badge" class="user-badge">DF-7701</span>
+                    </div>
+                </div>
+                <button class="btn-logout" title="Logout" onclick="Auth.logout()">🚪</button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW AREA -->
+        <main class="app-main">
+            <header class="app-topbar">
+                <div class="page-headline">
+                    <h1 class="page-title">Executive Forensics Dashboard</h1>
+                    <span class="badge badge-active">Live Surveillance Feed</span>
+                </div>
+                <div class="topbar-actions">
+                    <a href="cases.html" class="btn btn-secondary btn-sm">Explore Cases</a>
+                    <a href="analysis.html" class="btn btn-primary btn-sm">Launch Analysis Engine</a>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <!-- LEGAL DISCLAIMER BANNER -->
+                <div class="forensic-disclaimer-banner">
+                    <div style="font-size: 20px;">⚖️</div>
+                    <div>
+                        <strong>FORENSIC INTEGRITY NOTICE:</strong>
+                        This system models 10 fictional forensic crime cases and computes investigative leads using deterministic data structure correlation. All analytical outputs represent investigative hypotheses requiring certified examiner verification, not legal proof of guilt.
+                    </div>
+                </div>
+
+                <!-- TOP SUMMARY METRICS (4 CARDS) -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-title">Active Investigation Cases</div>
+                        <div id="stat-cases" class="metric-value">10</div>
+                        <div class="metric-subtitle">Across 10 distinct crime categories</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Total Evidence Artifacts</div>
+                        <div id="stat-evidence" class="metric-value">105</div>
+                        <div class="metric-subtitle">Cryptographically hashed & tracked</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Persons of Interest</div>
+                        <div id="stat-persons" class="metric-value">30</div>
+                        <div class="metric-subtitle">Custodians, witnesses & analysts</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Registered Hardware Devices</div>
+                        <div id="stat-devices" class="metric-value">20</div>
+                        <div class="metric-subtitle">Seized, imaged & active endpoints</div>
+                    </div>
+                </div>
+
+                <!-- CHARTS GRID (2 COLUMNS) -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 24px; margin-bottom: 28px;">
+                    <!-- Evidence Distribution Chart -->
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-header">
+                            <span class="card-title">📦 Evidence Artifact Distribution</span>
+                            <span class="badge badge-info">Chart.js Visualizer</span>
+                        </div>
+                        <div style="height: 280px; position: relative;">
+                            <canvas id="chart-evidence-types"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Case Severity & Status Chart -->
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-header">
+                            <span class="card-title">🚨 Case Severity Breakdown</span>
+                            <span class="badge badge-high">Threat Stratification</span>
+                        </div>
+                        <div style="height: 280px; position: relative;">
+                            <canvas id="chart-case-severity"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CRITICAL CASES TABLE & RECENT AUDIT LOGS -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                    <!-- Active Investigation Cases -->
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-header">
+                            <span class="card-title">🗂️ High-Priority Digital Crime Cases</span>
+                            <a href="cases.html" class="btn btn-secondary btn-sm">View All 10 Cases →</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="forensic-table">
+                                <thead>
+                                    <tr>
+                                        <th>Case ID</th>
+                                        <th>Title & Scenario</th>
+                                        <th>Category</th>
+                                        <th>Severity</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="critical-cases-tbody">
+                                    <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading cases...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Recent Investigation Audit Trail -->
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-header">
+                            <span class="card-title">📜 Recent Audit Feed</span>
+                            <span class="badge badge-info">Chain of Custody</span>
+                        </div>
+                        <div id="recent-activity-feed" style="display: flex; flex-direction: column; gap: 14px; max-height: 380px; overflow-y: auto;">
+                            <!-- Activity items rendered via JS -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
